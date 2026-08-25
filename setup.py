@@ -8,6 +8,6 @@ setup(
     install_requires=[
         "pandas",
         "scikit-learn",
-        "mlflow"
-    ]
+        "mlflow",
+    ],
 )
