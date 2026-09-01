@@ -1,0 +1,89 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: py src/data_ingestion.py
+    deps:
+    - path: src/data_ingestion.py
+      hash: md5
+      md5: 0ce6ac73f9b3b4d8a0a439227256c663
+      size: 3412
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 02d0e86678335c0fced0a0463622b81e.dir
+      size: 45547125
+      nfiles: 2
+  data_preprocessing:
+    cmd: py src/data_preprocessing.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 02d0e86678335c0fced0a0463622b81e.dir
+      size: 45547125
+      nfiles: 2
+    - path: src/data_preprocessing.py
+      hash: md5
+      md5: 2d2d85154bfb0ddd51c7839a2a778cfc
+      size: 4828
+    outs:
+    - path: data/interim
+      hash: md5
+      md5: 833095b6442e7f1e18e45afb4d626b87.dir
+      size: 44308158
+      nfiles: 2
+  feature_engineering:
+    cmd: py src/feature_engineering.py
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: 833095b6442e7f1e18e45afb4d626b87.dir
+      size: 44308158
+      nfiles: 2
+    - path: src/feature_engineering.py
+      hash: md5
+      md5: 44fe75baba39157907e74f08d66e3fec
+      size: 5439
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: c88ea4ec647b1fc3b38bee60aae1fa26.dir
+      size: 175990684
+      nfiles: 2
+  model_training:
+    cmd: py src/model_training.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: c88ea4ec647b1fc3b38bee60aae1fa26.dir
+      size: 175990684
+      nfiles: 2
+    - path: src/model_training.py
+      hash: md5
+      md5: 58c861a6324a45b23cfce0317e2a7f26
+      size: 4172
+    outs:
+    - path: model_data/models.pkl
+      hash: md5
+      md5: 150803c2ae3abd41f80e322a66d21e8e
+      size: 716811311
+  model_evaluation:
+    cmd: py src/model_evaluation.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: c88ea4ec647b1fc3b38bee60aae1fa26.dir
+      size: 175990684
+      nfiles: 2
+    - path: model_data/models.pkl
+      hash: md5
+      md5: 150803c2ae3abd41f80e322a66d21e8e
+      size: 716811311
+    - path: src/model_evaluation.py
+      hash: md5
+      md5: b7fe8cbec5c5ed17c3c4af7c8d29c7ae
+      size: 3785
+    outs:
+    - path: model_evaluation/model_evaluation.txt
+      hash: md5
+      md5: 855923ff77aacc8fe94c63d4cfaa6101
+      size: 159

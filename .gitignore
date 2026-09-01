@@ -1,4 +1,7 @@
 # Byte-compiled / optimized / DLL files
+data
+model_data
+model_evaluation
 __pycache__/
 *.py[codz]
 *$py.class
