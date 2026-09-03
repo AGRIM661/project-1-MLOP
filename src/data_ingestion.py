@@ -2,6 +2,7 @@ import os
 import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import yaml
 
 
 # ============================================
@@ -36,6 +37,44 @@ if not logger.handlers:
 
 
 # ============================================
+# LOAD PARAMETERS
+# ============================================
+
+def load_params(params_path="params.yaml"):
+    try:
+        with open(params_path, "r") as file:
+            params = yaml.safe_load(file)
+
+        logger.info(
+            "Parameters loaded successfully from %s",
+            params_path
+        )
+
+        return params
+
+    except FileNotFoundError:
+        logger.error(
+            "Parameters file not found: %s",
+            params_path
+        )
+        raise
+
+    except yaml.YAMLError as e:
+        logger.error(
+            "Error parsing parameters file: %s",
+            e
+        )
+        raise
+
+    except Exception as e:
+        logger.error(
+            "Failed to load parameters: %s",
+            e
+        )
+        raise
+
+
+# ============================================
 # LOAD DATA
 # ============================================
 
@@ -49,15 +88,24 @@ def load_data(data_url):
         return df
 
     except FileNotFoundError:
-        logger.error("Dataset not found: %s", data_url)
+        logger.error(
+            "Dataset not found: %s",
+            data_url
+        )
         raise
 
     except pd.errors.ParserError as e:
-        logger.error("Error parsing dataset: %s", e)
+        logger.error(
+            "Error parsing dataset: %s",
+            e
+        )
         raise
 
     except Exception as e:
-        logger.error("Failed to load dataset: %s", e)
+        logger.error(
+            "Failed to load dataset: %s",
+            e
+        )
         raise
 
 
@@ -69,19 +117,49 @@ def save_data(df_train, df_test):
     try:
 
         save_path = os.path.join("data", "raw")
-        os.makedirs(save_path, exist_ok=True)
 
-        train_path = os.path.join(save_path, "train.csv")
-        test_path = os.path.join(save_path, "test.csv")
+        os.makedirs(
+            save_path,
+            exist_ok=True
+        )
 
-        df_train.to_csv(train_path, index=False)
-        df_test.to_csv(test_path, index=False)
+        train_path = os.path.join(
+            save_path,
+            "train.csv"
+        )
 
-        logger.info("Training data saved to: %s", train_path)
-        logger.info("Testing data saved to: %s", test_path)
+        test_path = os.path.join(
+            save_path,
+            "test.csv"
+        )
+
+        df_train.to_csv(
+            train_path,
+            index=False
+        )
+
+        df_test.to_csv(
+            test_path,
+            index=False
+        )
+
+        logger.info(
+            "Training data saved to: %s",
+            train_path
+        )
+
+        logger.info(
+            "Testing data saved to: %s",
+            test_path
+        )
 
     except Exception as e:
-        logger.error("Failed to save train/test data: %s", e)
+
+        logger.error(
+            "Failed to save train/test data: %s",
+            e
+        )
+
         raise
 
 
@@ -93,17 +171,36 @@ def main():
 
     try:
 
-        # Dataset path
-        data_url = r"C:\Users\hp\OneDrive\Desktop\git tutorial\project-1-MLOP\notebook\train.csv"
+        # Load parameters
+        param_list = load_params()
 
-        # Train-test split parameters
-        test_size = 0.2
+        # ========================================
+        # DATASET PATH
+        # ========================================
+
+        data_url = (
+            r"C:\Users\hp\OneDrive\Desktop\git tutorial"
+            r"\project-1-MLOP\notebook\train.csv"
+        )
+
+        # ========================================
+        # TRAIN-TEST SPLIT PARAMETERS
+        # ========================================
+
+        test_size = param_list["data_ingestion"]["test_size"]
+
         random_state = 42
 
-        # Load dataset
+        # ========================================
+        # LOAD DATA
+        # ========================================
+
         df = load_data(data_url)
 
-        # Split dataset
+        # ========================================
+        # SPLIT DATA
+        # ========================================
+
         df_train, df_test = train_test_split(
             df,
             test_size=test_size,
@@ -116,10 +213,18 @@ def main():
             df_test.shape
         )
 
-        # Save train and test data
-        save_data(df_train, df_test)
+        # ========================================
+        # SAVE DATA
+        # ========================================
 
-        logger.info("Data ingestion completed successfully!")
+        save_data(
+            df_train,
+            df_test
+        )
+
+        logger.info(
+            "Data ingestion completed successfully!"
+        )
 
     except Exception as e:
 
@@ -135,4 +240,5 @@ def main():
 # ENTRY POINT
 # ============================================
 
-main()
+if __name__ == "__main__":
+    main()
